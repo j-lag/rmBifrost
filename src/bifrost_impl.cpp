@@ -9,7 +9,9 @@
 #include <spdlog/spdlog.h>
 
 #include "hook_typedefs.h"
+#include "BookConfig.h"
 #include "gui/boot_screen.h"
+#include "gui/ChooseFile_screen.h"
 
 std::weak_ptr<bifrost_impl> bifrost_impl::instance;
 
@@ -43,23 +45,36 @@ void bifrost_impl::start_bifrost(QObject* epfb_inst)
 
     // call lvgl_renderer_inst->start() in a separate thread
     auto renderer_thread = std::thread([this] { lvgl_renderer_inst->start(); });
+    
+    //boot screen selection
+    //{
+    //    auto boot_screen_inst = std::make_shared<boot_screen>(lvgl_renderer_inst);
+    //    auto boot_screen_thread = std::thread([&] { boot_screen_inst->start(); });
+    //
+    //    boot_screen_thread.join();
+    //
+    //    if (boot_screen_inst->state == RM_STOCK_OS) {
+    //        lvgl_renderer_inst->stop();
+    //        renderer_thread.join();
+    //
+    //        spdlog::debug("Relinquished control flow to the stock OS");
+    //        hook_passthrough = true;
+    //        return;
+    //    }
+    //}
+    
 
-    auto boot_screen_inst = std::make_shared<boot_screen>(lvgl_renderer_inst);
-    auto boot_screen_thread = std::thread([&] { boot_screen_inst->start(); });
-
-    boot_screen_thread.join();
-
-    if (boot_screen_inst->state == RM_STOCK_OS) {
-        lvgl_renderer_inst->stop();
-        renderer_thread.join();
-
-        spdlog::debug("Relinquished control flow to the stock OS");
-        hook_passthrough = true;
-        return;
+    //app
+    {
+        spdlog::debug("Starting App");
+        //read configuration
+        BookConfig::GetInstance().Init("/BookConfig.json");
+        //run app
+        auto ChooseFile_screen_inst = std::make_shared<ChooseFile_screen>(lvgl_renderer_inst);
+        auto ChooseFile_screen_thread = std::thread([&] { ChooseFile_screen_inst->start(BookConfig::GetInstance().GetCurrentFolder().c_str()); });
+        ChooseFile_screen_thread.join();
     }
-
-    // TODO: homebrew apps
-
+    spdlog::debug("End App");
     renderer_thread.join();
 }
 

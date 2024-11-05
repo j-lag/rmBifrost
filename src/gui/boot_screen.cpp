@@ -28,6 +28,7 @@ void boot_screen::start() {
 }
 
 boot_screen::~boot_screen() {
+    spdlog::debug("deleting launch options screen");
     for (auto obj: deletion_queue) {
         lv_obj_delete(obj);
     }

@@ -12,13 +12,20 @@ add_library(rmBifrost SHARED entrypoint.cpp
         bifrost.cpp
         bifrost_impl.cpp
         bifrost_impl.h
+        BookConfig.cpp
+        BookConfig.h
         gui/lvgl_renderer.cpp
         gui/lvgl_renderer.h
         ${BSWR_SOURCES}
         ${lvgl_sources}
         gui/boot_screen.cpp
         gui/boot_screen.h
-
+        gui/ChooseFile_screen.cpp
+        gui/ChooseFile_screen.h
+        gui/ComicArchive.cpp
+        gui/ComicArchive.h
+        gui/ImageIo.cpp
+        gui/ImageIo.h        
         # fonts
         resources/fonts/ebgaramond_48.c
 )
@@ -34,3 +41,32 @@ target_include_directories(rmBifrost PRIVATE ${Qt6Core_INCLUDE_DIRS} ${Qt6Gui_IN
 
 add_subdirectory(resources)
 target_link_libraries(rmBifrost PRIVATE bifrost::resources)
+
+add_subdirectory(libs/miniz)
+target_link_libraries(rmBifrost PRIVATE miniz)
+
+add_subdirectory(libs/unrar-free)
+target_link_libraries(rmBifrost PRIVATE unrar-free)
+
+add_subdirectory(libs/cJSON)
+target_link_libraries(rmBifrost PRIVATE cJSON)
+
+
+## Find the libraries in paths
+find_library(PNG_LIBRARY png PATHS )
+find_library(ZLIB_LIBRARY z PATHS )
+find_library(TURBOJPEG_LIB turbojpeg PATHS)
+
+# Check if libraries are found
+if (NOT TURBOJPEG_LIB)
+    message(FATAL_ERROR "TurboJPEG library not found")
+endif()
+if(NOT PNG_LIBRARY)
+    message(FATAL_ERROR "libpng not found in ${SYSROOT_PATH}/usr/lib")
+endif()
+if(NOT ZLIB_LIBRARY)
+    message(FATAL_ERROR "libz not found in ${SYSROOT_PATH}/usr/lib")
+endif()
+
+## Link libraries to your target
+target_link_libraries(rmBifrost PRIVATE ${PNG_LIBRARY} ${ZLIB_LIBRARY} ${TURBOJPEG_LIB} )

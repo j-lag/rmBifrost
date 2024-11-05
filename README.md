@@ -22,3 +22,22 @@ By viewing, downloading, or using any code or derived binaries of this repositor
 
   "reMarkable" and "reMarkable Paper Pro" are registered trademarks of Remarkable AS. All rights in the trademarks are the property of Remarkable AS. Any use is for nominative purposes only, and no endorsement, sponsorship, or affiliation is implied or intended.
 </details>
+
+# reminder
+
+## install toolchain
+
+./meta-toolchain-remarkable-4.0.813-ferrari-public-x86_64-toolchain.sh 
+
+## run toolchain
+
+osboxes@osboxes:/mnt/shared$  . /opt/codex/ferrari/4.0.813/environment-setup-cortexa53-crypto-remarkable-linux
+
+## install turbojpeg / libpng:
+
+scp /opt/codex/ferrari/4.0.813/sysroots/cortexa53-crypto-remarkable-linux/usr/lib/libturbojpeg.so* root@10.11.99.1:/home/root
+scp /opt/codex/ferrari/4.0.813/sysroots/cortexa53-crypto-remarkable-linux/usr/lib/libpng*.so* root@10.11.99.1:/home/root
+
+## run:
+export LD_LIBRARY_PATH=/home/root:$LD_LIBRARY_PATH
+LD_PRELOAD=./libbifrost.so /usr/bin/xochitl --system

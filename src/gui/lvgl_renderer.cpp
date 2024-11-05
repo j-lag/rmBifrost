@@ -13,6 +13,13 @@ uint32_t lv_tick_cb()
 
 void lvgl_renderer::lv_display_flush(lv_display_t* disp, const lv_area_t* area, uint8_t* color_p)
 {
+    //spdlog::debug("full refresh");
+    //cfg.screen_update_func(cfg.epfb_inst, { area->x1, area->y1 }, { area->x2, area->y2 }, 1, 1, 0);
+    //spdlog::debug("flush refresh");
+    //lv_display_flush_ready(disp);
+    //spdlog::debug("end refresh");
+    //return;
+
     int fb_width = cfg.fb->width();
     int fb_height = cfg.fb->height();
     int fb_depth = cfg.fb->depth() / 8;
@@ -42,8 +49,8 @@ void lvgl_renderer::lv_display_flush(lv_display_t* disp, const lv_area_t* area, 
         }
     }
 
-    spdlog::debug("requested flushing area: {}x{}-{}x{}; actual flushing area: {}x{}-{}x{}",
-                  area->x1, area->y1, area->x2, area->y2, p1.x, p1.y, p2.x, p2.y);
+    spdlog::debug("requested flushing area: {} -> {}x{}-{}x{}; actual flushing area: {}x{}-{}x{}",
+                  pixel_changed, area->x1, area->y1, area->x2, area->y2, p1.x, p1.y, p2.x, p2.y);
 
     if (pixel_changed) {
         refresh(p1, p2, global_refresh_hint);

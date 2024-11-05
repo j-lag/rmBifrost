@@ -1,0 +1,17 @@
+{
+    "current_book" : "/books/name1.cbr",
+    "current_folder" : "/books" ,
+    "book_status":
+    {
+        "name1.cbr" : 
+        {
+            "current_page": 3,
+            "page_count": 51
+        },
+        "name2.cbr" : 
+        {
+            "current_page": 5,
+            "page_count": 37
+        },
+    }
+}
