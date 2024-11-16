@@ -7,7 +7,8 @@
 // Class to store book information
 class BookInfo {
 public:
-    std::string name;
+    std::string name = "";
+    std::string thumbnail= "";
     int currentPage = 0;
     int pageCount = 0;
 };

@@ -36,6 +36,7 @@ private:
     void folder_selected_cb(lv_event_t* e);
     void file_selected_cb(lv_event_t* e);
     void abort_cb(lv_event_t* e);
+    void scroll_event_cb(lv_event_t* e);
     void update_path_label();
 };
 

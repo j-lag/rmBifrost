@@ -3,6 +3,7 @@
 #include <condition_variable>
 #include <vector>
 #include <cstdint>
+#include <stack>
 
 #include "lvgl_renderer.h"
 
@@ -30,10 +31,12 @@ private:
     std::vector<uint8_t> lottie_buf;
     std::vector<uint8_t> welcome_json;
     std::shared_ptr<lvgl_renderer> lvgl_renderer_inst;
-    std::vector<lv_obj_t *> deletion_queue;
+    std::stack<lv_obj_t *> deletion_queue;
 
     std::condition_variable cv;
     std::mutex cv_m;
+
+    lv_obj_t *lottie_obj;
 
     void setup_animation();
 

@@ -1,27 +1,19 @@
 #ifndef COMIC_ARCHIVE_H
 #define COMIC_ARCHIVE_H
-
 #include <vector>
 #include "lvgl_renderer.h"
-#include "miniz.h"
+#include "ImageIo.h"
 
-class ComicArchive{
+class ComicArchive {
 public:
-	static ComicArchive* Create(const char* filename);
-	virtual uint32_t GetImageCount() = 0;
-	virtual lv_img_dsc_t* GetImage(uint32_t id, uint32_t height) = 0;
-};
+    static ComicArchive* Create(const char* filename);
 
+    virtual ~ComicArchive() = default;
+    virtual uint32_t GetImageCount() = 0;
+    virtual bool GetImage(uint32_t id, uint32_t height, Image& image) = 0;
 
-class CBZComicArchive : public ComicArchive {
-public:
-	CBZComicArchive(const char* archive_name);
-	~CBZComicArchive();
-	uint32_t GetImageCount() override;
-	lv_img_dsc_t* GetImage(uint32_t id, uint32_t height) override;
-private:
-	mz_zip_archive zip_archive;
-	std::vector<mz_zip_archive_file_stat> image_files;
+protected:
+    ComicArchive() = default;
 };
 
 

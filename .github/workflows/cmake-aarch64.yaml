@@ -1,0 +1,49 @@
+name: aarch64
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  BUILD_TYPE: Release
+  TOOLCHAIN_URL: https://storage.googleapis.com/remarkable-codex-toolchain/3.14.3.0/meta-toolchain-remarkable-4.0.813-ferrari-public-x86_64-toolchain.sh
+  TOOLCHAIN_DIR: toolchain
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache Toolchain
+        id: cache-toolchain
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/${{ env.TOOLCHAIN_DIR }}
+          key: ${{ runner.os }}-toolchain-${{ hashFiles('**/cmake-aarch64.yaml') }}
+
+      - name: Download and Install Toolchain
+        if: steps.cache-toolchain.outputs.cache-hit != 'true'
+        run: |
+          wget ${{ env.TOOLCHAIN_URL }} -O toolchain.sh
+          chmod +x toolchain.sh
+          ./toolchain.sh -y -d ${{ github.workspace }}/${{ env.TOOLCHAIN_DIR }}
+
+      - name: Source Toolchain Environment
+        run: |
+          source ${{ github.workspace }}/${{ env.TOOLCHAIN_DIR }}/environment-setup-cortexa53-crypto-remarkable-linux
+          env >> $GITHUB_ENV
+
+      - name: Configure CMake
+        # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+        # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build
+        # Build your program with the given configuration
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target rmBifrost examples

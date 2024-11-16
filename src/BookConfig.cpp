@@ -1,6 +1,7 @@
 #include "BookConfig.h"
 #include <fstream>
 #include <iostream>
+#include <spdlog/spdlog.h>
 
 // Singleton instance method
 BookConfig& BookConfig::GetInstance() {
@@ -40,7 +41,7 @@ void BookConfig::LoadFromFile() {
 void BookConfig::SaveToFile() {
     char* jsonString = cJSON_Print(root);
     std::ofstream file(configFilePath);
-
+    spdlog::debug("Save to file {} : \n{}\n", configFilePath, jsonString);
     if (file.is_open()) {
         file << jsonString;
         file.close();
@@ -84,16 +85,16 @@ void BookConfig::SetCurrentFolder(const std::string& currentFolder) {
 BookInfo BookConfig::GetBookInfo(const std::string& bookName) {
     BookInfo bookInfo;
     bookInfo.name = bookName;
-
     cJSON* bookStatus = cJSON_GetObjectItem(root, "book_status");
     cJSON* bookItem = cJSON_GetObjectItem(bookStatus, bookName.c_str());
-
     if (bookItem) {
         cJSON* currentPageItem = cJSON_GetObjectItem(bookItem, "current_page");
         cJSON* pageCountItem = cJSON_GetObjectItem(bookItem, "page_count");
+        cJSON* thumbnailItem = cJSON_GetObjectItem(bookItem, "thumbnail");
 
         bookInfo.currentPage = currentPageItem && cJSON_IsNumber(currentPageItem) ? currentPageItem->valueint : 0;
         bookInfo.pageCount = pageCountItem && cJSON_IsNumber(pageCountItem) ? pageCountItem->valueint : 0;
+        bookInfo.thumbnail = thumbnailItem && cJSON_IsString(thumbnailItem) ? thumbnailItem->valuestring : "";
     }
 
     return bookInfo;
@@ -107,11 +108,21 @@ void BookConfig::SetBookInfo(const BookInfo& bookInfo) {
         cJSON_AddItemToObject(root, "book_status", bookStatus);
     }
 
-    cJSON* bookItem = cJSON_CreateObject();
+    cJSON* newBookItem = cJSON_CreateObject();
+
+    cJSON* bookItem = cJSON_GetObjectItem(bookStatus, bookInfo.name.c_str());
+    //if (bookItem)
+    //{
+    //    cJSON_ReplaceItemInObject(bookStatus, bookInfo.name.c_str(), bookItem);
+    //}
+    if (bookItem == NULL)
+    {
+        bookItem = cJSON_AddObjectToObject(bookStatus, bookInfo.name.c_str());
+    }
     cJSON_AddNumberToObject(bookItem, "current_page", bookInfo.currentPage);
     cJSON_AddNumberToObject(bookItem, "page_count", bookInfo.pageCount);
+    cJSON_AddStringToObject(bookItem, "thumbnail", bookInfo.thumbnail.c_str());
 
-    cJSON_ReplaceItemInObject(bookStatus, bookInfo.name.c_str(), bookItem);
 
     SaveToFile();
 }

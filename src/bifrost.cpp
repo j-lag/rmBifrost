@@ -1,4 +1,4 @@
-#include "bifrost/bifrost.h"
+#include "bifrost.h"
 
 #include "bifrost_impl.h"
 

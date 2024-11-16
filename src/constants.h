@@ -2,20 +2,14 @@
 #define CONSTANTS_H
 
 #include <string>
-#include <cmrc/cmrc.hpp>
-
-CMRC_DECLARE(bifrost);
+#include <bifrost/global_constants.h>
+#include <mutex>
 
 constexpr auto SCREEN_WIDTH = 1620;
 constexpr auto SCREEN_HEIGHT = 2160;
 
 constexpr auto ENV_DEBUG = "BIFROST_DEBUG";
 
-inline std::vector<uint8_t> get_resource_file(const std::string& filename)
-{
-    auto fs = cmrc::bifrost::get_filesystem();
-    auto file = fs.open(filename);
-    return {file.begin(), file.end()};
-}
+inline std::mutex g_lvgl_mutex;
 
 #endif // CONSTANTS_H

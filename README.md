@@ -1,5 +1,5 @@
 # rmBifrost
-rmBifrost is a development framework that enables homebrew applications on the reMarkable Paper Pro (RMPP). Supports 3.14.4.0.
+rmBifrost is a development framework that enables homebrew applications on the reMarkable Paper Pro (RMPP). Supports 3.15.4.2, 3.14.4.0.
 
 This project is under active development, and we welcome contributions. Please feel free to open an issue if you'd like to implement any features.
 
@@ -37,6 +37,7 @@ osboxes@osboxes:/mnt/shared$  . /opt/codex/ferrari/4.0.813/environment-setup-cor
 
 scp /opt/codex/ferrari/4.0.813/sysroots/cortexa53-crypto-remarkable-linux/usr/lib/libturbojpeg.so* root@10.11.99.1:/home/root
 scp /opt/codex/ferrari/4.0.813/sysroots/cortexa53-crypto-remarkable-linux/usr/lib/libpng*.so* root@10.11.99.1:/home/root
+scp /opt/codex/ferrari/4.0.813/sysroots/cortexa53-crypto-remarkable-linux/usr/lib/libarchive*.so* root@10.11.99.1:/home/root
 
 ## run:
 export LD_LIBRARY_PATH=/home/root:$LD_LIBRARY_PATH
